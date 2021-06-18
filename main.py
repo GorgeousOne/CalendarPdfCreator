@@ -33,11 +33,11 @@ def create_table_data(date):
 
 
 def gray_out_other_months(date, style):
-	"""gays out days that were added to the table from other months"""
+	"""grays out days that were added to the table from other months"""
 	month_start = date.replace(day=1)
 	month_end = date.replace(day=calendar.monthrange(date.year, date.month)[1])
 
-	gray = colors.toColor('rgb(250, 250, 250)')
+	gray = colors.toColor('rgb(247, 247, 247)')
 	start_off = month_start.weekday()
 	end_off = month_end.weekday()
 
@@ -101,6 +101,9 @@ if __name__ == '__main__':
 	import locale
 	locale.setlocale(locale.LC_ALL, "de_DE.utf8")
 
-	pdfmetrics.registerFont(TTFont('Inter', 'C:/Users/Fred Feuerpferd/AppData/Local/Microsoft/Windows/Fonts/Inter-Regular.ttf'))
+	import os
+	# https://fonts.google.com/specimen/Inter
+	pdfmetrics.registerFont(TTFont('Inter', os.path.expanduser('~/AppData/Local/Microsoft/Windows/Fonts/Inter-Regular.ttf')))
+
 	for i in range(6, 11):
 		print_month(2021, i)
