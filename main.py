@@ -1,5 +1,6 @@
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import mm
+from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.pagesizes import landscape, A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -37,7 +38,7 @@ def gray_out_other_months(date, style):
 	month_start = date.replace(day=1)
 	month_end = date.replace(day=calendar.monthrange(date.year, date.month)[1])
 
-	gray = colors.toColor('rgb(247, 247, 247)')
+	gray = colors.toColor('rgb(235, 235, 235)')
 	start_off = month_start.weekday()
 	end_off = month_end.weekday()
 
@@ -62,11 +63,11 @@ def print_month(year=datetime.date.today().year, month=datetime.date.today().mon
 	text_styles = getSampleStyleSheet()
 	header_style = text_styles["Normal"]
 	header_style.fontName = "Inter"
+	header_style.alignment = TA_CENTER
 	header_style.fontSize = 15
 	header_style.leading = 20
-	header_style.leftIndent = 20
 	header_style.textTransform = 'uppercase'
-	elements.append(Paragraph(date.strftime("%y &nbsp; %B"), header_style))
+	elements.append(Paragraph(date.strftime("%B &nbsp; %Y"), header_style))
 
 	table_width = 292 * mm
 	table_height = 205 * mm
@@ -87,7 +88,7 @@ def print_month(year=datetime.date.today().year, month=datetime.date.today().mon
 		('ALIGN', (0, 0), (-1, 0), "CENTER"),
 		('VALIGN', (0, 1), (-1, -1), 'TOP'),
 		('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-		('LINEBEFORE', (5, 0), (5, -1), 1, colors.black),
+		('LINEBEFORE', (5, 0), (5, -1), 2, colors.gray),
 		('BOX', (0, 0), (-1, -1), 0.25, colors.black),
 	])
 	gray_out_other_months(date, table_style)
@@ -99,11 +100,14 @@ def print_month(year=datetime.date.today().year, month=datetime.date.today().mon
 
 if __name__ == '__main__':
 	import locale
+
 	locale.setlocale(locale.LC_ALL, "de_DE.utf8")
 
 	import os
+
 	# https://fonts.google.com/specimen/Inter
-	pdfmetrics.registerFont(TTFont('Inter', os.path.expanduser('~/AppData/Local/Microsoft/Windows/Fonts/Inter-Regular.ttf')))
+	pdfmetrics.registerFont(
+		TTFont('Inter', os.path.expanduser('~/AppData/Local/Microsoft/Windows/Fonts/Inter-Regular.ttf')))
 
 	for i in range(6, 11):
 		print_month(2021, i)
