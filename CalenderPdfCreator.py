@@ -1,5 +1,6 @@
 import calendar
 import datetime
+import os
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -62,12 +63,12 @@ def create_table_style():
 	return TableStyle([
 		('FONTNAME', (0, 0), (-1, -1), 'Inter'),
 		('TEXTCOLOR', (0, 0), (-1, -1), colors.gray),
-		('VALIGN', (0, 0), (-1, 0), 'MIDDLE'),
+		('VALIGN', (0, 0), (-1, 0), 'MIDDLE'),  # centers weekday names
 		('ALIGN', (0, 0), (-1, 0), "CENTER"),
-		('VALIGN', (0, 1), (-1, -1), 'TOP'),
-		('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-		('LINEBEFORE', (5, 0), (5, -1), 2, colors.gray),
-		('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+		('VALIGN', (0, 1), (-1, -1), 'TOP'),  # aligns day numbers top left
+		('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),  # draws grid
+		('BOX', (0, 0), (-1, -1), 0.25, colors.black),  # draws surrounding box
+		('LINEBEFORE', (5, 0), (5, -1), 2, colors.gray),  # draws vertical weekend line
 	])
 
 
@@ -109,11 +110,12 @@ def print_month(year=datetime.date.today().year, month=datetime.date.today().mon
 	doc.build(elements)
 
 
-def print_year(year=datetime.date.today().year):
+def print_year(year=datetime.date.today().year, save_dir=os.path.dirname(os.path.realpath(__file__))):
 	date = datetime.date(year, 1, 1)
 
 	doc = SimpleDocTemplate(
-		date.strftime("%Y.pdf"),
+		filename=date.strftime("%Y.pdf"),
+		outfiledir=save_dir,
 		pagesize=landscape(A4),
 		leftMargin=0,
 		rightMargin=0,
@@ -128,13 +130,16 @@ def print_year(year=datetime.date.today().year):
 	doc.build(elements)
 
 
-if __name__ == '__main__':
+def init():
 	import locale
 	locale.setlocale(locale.LC_ALL, "de_DE.utf8")
 
-	import os
 	# https://fonts.google.com/specimen/Inter
-	pdfmetrics.registerFont(TTFont('Inter', os.path.expanduser('~/AppData/Local/Microsoft/Windows/Fonts/Inter-Regular.ttf')))
+	pdfmetrics.registerFont(
+		TTFont('Inter', os.path.expanduser('~/AppData/Local/Microsoft/Windows/Fonts/Inter-Regular.ttf')))
 
+
+if __name__ == '__main__':
+	init()
 	# print_month(2021, 6)
 	print_year(2021)
